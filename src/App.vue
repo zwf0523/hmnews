@@ -6,6 +6,7 @@
 <style lang="less">
 // 引入图标库
 @import url("//at.alicdn.com/t/font_1426139_jm7n2373nlh.css");
+@import url("../node_modules/vant/lib/index.css");
 // 公共的样式
 * {
   margin: 0;
