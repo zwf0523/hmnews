@@ -15,6 +15,7 @@ const routes = [
     name: 'register',
     component: () => import("@/views/Register")
   },
+
   //返回登录页
   {
     path: '/login',
