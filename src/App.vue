@@ -4,6 +4,8 @@
   </div>
 </template>
 <style lang="less">
+// 引入图标库
+@import url("//at.alicdn.com/t/font_1426139_jm7n2373nlh.css");
 // 公共的样式
 * {
   margin: 0;
