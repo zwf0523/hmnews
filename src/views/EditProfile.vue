@@ -10,7 +10,12 @@
     </div>
 
     <!-- 按钮列表 -->
-    <Listbar label="昵称" :tips="userInfo.nickname" />
+    <Listbar label="昵称" :tips="userInfo.nickname" @click.native="show = true" />
+    <!-- 编辑昵称的弹窗 -->
+    <van-dialog v-model="show" title="修改昵称" show-cancel-button @confirm="handleChangeNickname">
+      <van-field v-model="nickname" placeholder="请输入用户名" />
+    </van-dialog>
+
     <Listbar label="密码" tips="******" />
     <Listbar label="性别" :tips="['女', '男'][userInfo.gender]" />
   </div>
@@ -24,7 +29,10 @@ export default {
     return {
       // 用户详情
       userInfo: {},
-      userJson: {}
+      userJson: {},
+      // 控制编辑昵称弹窗的显示隐藏
+      show: false,
+      nickname: ""
     };
   },
   components: {
@@ -32,7 +40,6 @@ export default {
     Listbar
   },
   mounted() {
-    // 只要能进入这个页面就表示肯定已经登陆
     const userJson = JSON.parse(localStorage.getItem("userInfo"));
     this.userJson = userJson;
     // 请求用户详情
@@ -46,6 +53,7 @@ export default {
       const { data } = res.data;
       // 保存到data
       this.userInfo = data;
+      this.nickname = data.nickname;
     });
   },
   methods: {
@@ -73,6 +81,8 @@ export default {
         });
       });
     },
+    // 编辑用户信息的函数,可以修改头像，昵称
+    // 修改头像
     handleEdit(data) {
       this.$axios({
         url: "/user_update/" + this.userInfo.id,
@@ -85,6 +95,13 @@ export default {
       }).then(res => {
         this.$toast.success("头像修改成功");
       });
+    },
+    // 修改昵称的事件
+    handleChangeNickname() {
+      // 调用编辑用户信息的函数
+      this.handleEdit({ nickname: this.nickname });
+      // 同步的修改当前显示的数据
+      this.userInfo.nickname = this.nickname;
     }
   }
 };
