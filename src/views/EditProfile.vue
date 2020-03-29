@@ -16,8 +16,32 @@
       <van-field v-model="nickname" placeholder="请输入用户名" />
     </van-dialog>
 
-    <Listbar label="密码" tips="******" />
-    <Listbar label="性别" :tips="['女', '男'][userInfo.gender]" />
+    <!-- 编辑密码的按钮 -->
+    <Listbar label="密码" tips="******" @click.native="showPassword = true" />
+
+    <!-- 编辑密码的弹窗 -->
+    <van-dialog
+      v-model="showPassword"
+      title="修改密码"
+      show-cancel-button
+      @confirm="handleChangePassword"
+    >
+      <van-field v-model="password" placeholder="请输入密码" type="password" />
+    </van-dialog>
+
+    <!-- 编辑性别的按钮 -->
+    <Listbar label="性别" :tips="['女', '男'][userInfo.gender]" @click.native="showGender = true" />
+
+    <!-- 编辑性别的弹窗 -->
+    <!-- close-on-click-action 自动关闭弹窗
+        actions 弹窗菜单的选项
+    select 选中某一项时候的事件-->
+    <van-action-sheet
+      v-model="showGender"
+      close-on-click-action
+      :actions="actions"
+      @select="onSelect"
+    />
   </div>
 </template>
 
@@ -32,7 +56,15 @@ export default {
       userJson: {},
       // 控制编辑昵称弹窗的显示隐藏
       show: false,
-      nickname: ""
+      showPassword: false,
+      showGender: false,
+      actions: [
+        // 对象的数据可以随意增加修改的，比如添加value属性用来传递给接口1/0
+        { name: "男", value: 1 },
+        { name: "女", value: 0 }
+      ],
+      nickname: "",
+      password: ""
     };
   },
   components: {
@@ -81,7 +113,7 @@ export default {
         });
       });
     },
-    // 编辑用户信息的函数,可以修改头像，昵称
+    // 编辑用户信息的函数,可以修改头像，昵称,密码
     // 修改头像
     handleEdit(data) {
       this.$axios({
@@ -96,12 +128,26 @@ export default {
         this.$toast.success("头像修改成功");
       });
     },
-    // 修改昵称的事件
+    // 修改昵称
     handleChangeNickname() {
       // 调用编辑用户信息的函数
       this.handleEdit({ nickname: this.nickname });
       // 同步的修改当前显示的数据
       this.userInfo.nickname = this.nickname;
+    },
+    // 修改密码
+    handleChangePassword() {
+      // 调用编辑用户信息的函数
+      this.handleEdit({ password: this.password });
+    },
+
+    // 修改性别
+    // 选中性别的时候触发的事件，item是选择的当前项
+    onSelect(item) {
+      // 调用编辑用户信息的函数
+      this.handleEdit({ gender: item.value });
+      // 同步的修改当前显示的数据
+      this.userInfo.gender = item.value;
     }
   }
 };
