@@ -13,7 +13,7 @@ const routes = [
   // 注册页
   {
     path: '/register',
-    component: () => import("@/views/register")
+    component: () => import("@/views/Register")
   },
   //返回登录页
   {
