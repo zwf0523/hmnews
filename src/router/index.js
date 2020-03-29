@@ -18,7 +18,6 @@ const routes = [
   //返回登录页
   {
     path: '/login',
-    name: 'login',
     component: () => import("@/views/Login")
   },
   // 个人中心页
@@ -26,7 +25,11 @@ const routes = [
     path: '/personal',
     component: () => import("@/views/Personal")
   },
-
+  {
+    // 编辑资料页
+    path: '/edit-profile',
+    component: () => import("@/views/EditProfile")
+  }
   // {
   //   path: '/about',
   //   name: 'About',
