@@ -4,13 +4,13 @@
     <NavigateBar title="编辑资料" />
     <!-- 头像 -->
     <div class="avatar">
-      <img src="@/assets/hero_01.png" />
+      <img :src="$axios.defaults.baseURL + userInfo.head_img" />
     </div>
 
     <!-- 按钮列表 -->
-    <Listbar label="昵称" tips="桐人" />
+    <Listbar label="昵称" :tips="userInfo.nickname" />
     <Listbar label="密码" tips="******" />
-    <Listbar label="性别" tips="男" />
+    <Listbar label="性别" :tips="['女', '男'][userInfo.gender]" />
   </div>
 </template>
 
@@ -18,9 +18,31 @@
 import Listbar from "@/components/Listbar";
 import NavigateBar from "@/components/NavigateBar";
 export default {
+  data() {
+    return {
+      // 用户详情
+      userInfo: {}
+    };
+  },
   components: {
     NavigateBar,
     Listbar
+  },
+  mounted() {
+    // 只要能进入这个页面就表示肯定已经登陆
+    const userJson = JSON.parse(localStorage.getItem("userInfo"));
+    // 请求用户详情
+    this.$axios({
+      url: "/user/" + userJson.user.id,
+      // 添加头信息
+      headers: {
+        Authorization: userJson.token
+      }
+    }).then(res => {
+      const { data } = res.data;
+      // 保存到data
+      this.userInfo = data;
+    });
   }
 };
 </script>
