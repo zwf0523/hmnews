@@ -17,11 +17,21 @@
       <!-- 右侧箭头图标 -->
       <span class="arrow iconfont iconjiantou1"></span>
     </div>
+    <Listbar />
+    <Listbar />
+    <Listbar />
+    <Listbar />
   </div>
 </template>
 
 <script>
-export default {};
+import Listbar from "@/components/Listbar";
+export default {
+  // 注册组件,导入的子组件都必须注册才可以再模板渲染
+  components: {
+    Listbar
+  }
+};
 </script>
 
 <style scoped lang="less" >
