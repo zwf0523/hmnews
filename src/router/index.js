@@ -10,18 +10,23 @@ const routes = [
     // component: Login
     component: () => import("@/views/Login")
   },
+  // 注册页
   {
     path: '/register',
-    name: 'register',
-    component: () => import("@/views/Register")
+    component: () => import("@/views/register")
   },
-
   //返回登录页
   {
     path: '/login',
     name: 'login',
     component: () => import("@/views/Login")
-  }
+  },
+  // 个人中心页
+  {
+    path: '/personal',
+    component: () => import("@/views/Personal")
+  },
+
   // {
   //   path: '/about',
   //   name: 'About',
