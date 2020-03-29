@@ -3,14 +3,19 @@
   <div class="navigate-bar">
     <!-- $router.back()是实例下的属性，可以直接在模板中渲染 -->
     <span class="iconfont iconjiantou2" @click="$router.back()"></span>
-    <strong>个人中心</strong>
+    <strong>{{title}}</strong>
     <!-- $router.push()是实例下的属性，可以直接在模板中渲染 -->
-    <span class="iconfont iconshouye" @click="$router.push('/')"></span>
+    <span class="iconfont iconshouye" @click="$router.push('/')" v-if="showHome"></span>
+    <!-- 如果showHome是false就显示下面这个span -->
+    <!-- v-else指令是必须要接着v-if后面来使用 -->
+    <span v-else class="iconfont iconshouye" style="opacity: 0"></span>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["title", "showHome"]
+};
 </script>
 
 <style scoped lang="less">
