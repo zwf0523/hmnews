@@ -23,7 +23,8 @@ export default {
   data() {
     return {
       // 用户详情
-      userInfo: {}
+      userInfo: {},
+      userJson: {}
     };
   },
   components: {
@@ -33,6 +34,7 @@ export default {
   mounted() {
     // 只要能进入这个页面就表示肯定已经登陆
     const userJson = JSON.parse(localStorage.getItem("userInfo"));
+    this.userJson = userJson;
     // 请求用户详情
     this.$axios({
       url: "/user/" + userJson.user.id,
@@ -49,7 +51,40 @@ export default {
   methods: {
     // 图片上传的方法
     afterRead(file) {
-      console.log(file);
+      const formData = new FormData();
+      // 第一个字符串的file表示接口接收的属性，第二个 file.file是文件对象
+      formData.append("file", file.file);
+
+      // 开始上传
+      this.$axios({
+        url: "/upload",
+        method: "POST",
+        headers: {
+          Authorization: this.userJson.token
+        },
+        data: formData
+      }).then(res => {
+        const { url } = res.data.data;
+        // 替换掉当前的头像路径
+        this.userInfo.head_img = url;
+        // 图片上传成功之后调用编辑用户信息的方法
+        this.handleEdit({
+          head_img: url
+        });
+      });
+    },
+    handleEdit(data) {
+      this.$axios({
+        url: "/user_update/" + this.userInfo.id,
+        method: "POST",
+        // 添加头信息
+        headers: {
+          Authorization: this.userJson.token
+        },
+        data
+      }).then(res => {
+        this.$toast.success("头像修改成功");
+      });
     }
   }
 };
