@@ -1,5 +1,13 @@
 <template>
   <div class="container">
+    <!-- 顶部的导航条 -->
+    <div class="navigate-bar">
+      <!-- $router.back()是实例下的属性，可以直接在模板中渲染 -->
+      <span class="iconfont iconjiantou2" @click="$router.back()"></span>
+      <strong>个人中心</strong>
+      <!-- $router.push()是实例下的属性，可以直接在模板中渲染 -->
+      <span class="iconfont iconshouye" @click="$router.push('/')"></span>
+    </div>
     <!-- 头部 -->
     <div class="header">
       <!-- 头像 -->
@@ -25,6 +33,10 @@
     <!-- :key不是报错，可以不加，
     但是vue希望给循环的元素指定“唯一的key”，所以推荐我们在循环时候都加上-->
     <Listbar v-for="(item,index) in rows" :key="index" :label="item.label" :tips="item.tips" />
+    <!-- handleClick点击退出按钮时候触发 -->
+    <!-- click.native这个事件类型，会给Listbar这个组件最外部的div强制绑定点击事件
+    不要去跟事件传递作比较-->
+    <Listbar @click.native="handleClick" label="退出" />
   </div>
 </template>
 
@@ -38,8 +50,7 @@ export default {
       rows: [
         { label: "我的关注", tips: "关注的用户" },
         { label: "我的跟帖", tips: "跟帖回复" },
-        { label: "我的收藏", tips: "文章视频" },
-        { label: "设置", tips: "" }
+        { label: "我的收藏", tips: "文章视频" }
       ],
       // 个人的详细信息,初始值给一个对象
       userInfo: {},
@@ -71,11 +82,38 @@ export default {
       // 赋值给data的userInfo
       this.userInfo = data;
     });
+  },
+  methods: {
+    handleClick() {
+      this.$dialog
+        .confirm({
+          title: "提示",
+          message: "确定退出吗？"
+        })
+        .then(() => {
+          localStorage.removeItem("userInfo");
+          this.$router.replace("/login");
+        })
+        .catch(() => {
+          // 点击取消按钮触发的函数
+        });
+    }
   }
 };
 </script>
 
 <style scoped lang="less" >
+.navigate-bar {
+  line-height: 48 / 360 * 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20 / 360 * 100vw;
+  border-bottom: 1px #eee solid;
+  .iconshouye {
+    font-size: 20px;
+  }
+}
 .header {
   padding: 20 / 360 * 100vw;
   display: flex;
