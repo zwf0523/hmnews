@@ -1,13 +1,7 @@
 <template>
   <div class="container">
-    <!-- 顶部的导航条 -->
-    <div class="navigate-bar">
-      <!-- $router.back()是实例下的属性，可以直接在模板中渲染 -->
-      <span class="iconfont iconjiantou2" @click="$router.back()"></span>
-      <strong>个人中心</strong>
-      <!-- $router.push()是实例下的属性，可以直接在模板中渲染 -->
-      <span class="iconfont iconshouye" @click="$router.push('/')"></span>
-    </div>
+    <!-- 自定义的头部导航组件 -->
+    <NavigateBar title="个人中心" :showHome="true" />
     <!-- 头部 -->
     <router-link to="/edit-profile">
       <div class="header">
@@ -27,7 +21,7 @@
           </div>
           <p>{{ moment(userInfo.create_date).format('YYYY-MM-DD') }}</p>
         </div>
-        <!-- 右侧箭头图标 -->
+        <!-- 右侧的箭头图标 -->
         <span class="arrow iconfont iconjiantou1"></span>
       </div>
     </router-link>
@@ -44,7 +38,9 @@
 
 <script>
 import Listbar from "@/components/Listbar";
+import NavigateBar from "@/components/NavigateBar";
 import moment from "moment";
+
 export default {
   data() {
     return {
@@ -62,7 +58,8 @@ export default {
   },
   // 注册组件,导入的子组件都必须注册才可以再模板渲染
   components: {
-    Listbar
+    Listbar,
+    NavigateBar
   },
   // 组件加载完毕后触发，类似window.onload
   mounted() {
