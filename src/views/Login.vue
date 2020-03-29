@@ -63,8 +63,13 @@ export default {
         method: "post",
         data: this.form
       }).then(res => {
-        const { message } = res.data;
+        // 获取到返回的信息, data是token和用户的信息，data是保存到本地的
+        const { message, data } = res.data;
         this.$toast.success(message);
+        // 把token和id保存到本地
+        // localStorage只能保存字符串，需要使用JSON.stringify来把对象转换成字符串
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        this.$router.push("/personal");
       });
     }
   }
