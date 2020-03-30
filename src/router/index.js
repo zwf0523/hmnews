@@ -29,7 +29,17 @@ const routes = [
     // 编辑资料页
     path: '/edit-profile',
     component: () => import("@/views/EditProfile")
-  }
+  },
+  {
+    // 我的关注页
+    path: '/follow',
+    component: () => import("@/views/Follow")
+  },
+  {
+    // 我的跟帖页
+    path: '/comment',
+    component: () => import("@/views/Comment")
+  },
   // {
   //   path: '/about',
   //   name: 'About',
