@@ -5,13 +5,13 @@
     <NavigateBar title="我的关注" />
 
     <!-- 静态页面的结构 -->
-    <div class="user-item">
+    <div class="user-item" v-for="(item,index) in follows" :key="index">
       <!-- 头像 -->
-      <img src="../assets/hero_01.png" alt="桐姥爷" />
+      <img :src="$axios.defaults.baseURL+item.head_img" alt="桐姥爷" />
       <!-- 关注的对象名称和关注日期 -->
       <div class="user-info">
-        <div>火星新闻播报</div>
-        <p>2019-10-10</p>
+        <div>{{item.nickname}}</div>
+        <p>{{moment(item.create_date).format('YYYY-MM-DD')}}</p>
       </div>
       <!-- 取消关注按钮 -->
       <span class="cancel">取消关注</span>
@@ -22,11 +22,35 @@
 <script>
 // 导入NavigateBar头部组件
 import NavigateBar from "@/components/NavigateBar";
-
+import moment from "moment";
 export default {
+  data() {
+    return {
+      follows: [],
+      // 时间插件
+      moment
+    };
+  },
   // 注册组件
   components: {
     NavigateBar
+  },
+  mounted() {
+    //   先获取储存在本地的token值
+    const localUserJson = JSON.parse(localStorage.getItem("userInfo"));
+    // 开始请求数据
+    this.$axios({
+      // 请求地址
+      url: "/user_follows",
+      //   请求头
+      headers: {
+        Authorization: localUserJson.token
+      }
+    }).then(res => {
+      console.log(res.data);
+      const { data } = res.data;
+      this.follows = data;
+    });
   }
 };
 </script>
