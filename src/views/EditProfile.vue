@@ -94,7 +94,7 @@ export default {
       const formData = new FormData();
       // 第一个字符串的file表示接口接收的属性，第二个 file.file是文件对象
       formData.append("file", file.file);
-
+      // 修改头像
       // 开始上传
       this.$axios({
         url: "/upload",
@@ -114,9 +114,9 @@ export default {
       });
     },
     // 编辑用户信息的函数,可以修改头像，昵称,密码
-    // 修改头像
+    // 封装的请求函数
     handleEdit(data) {
-      this.$axios({
+      return this.$axios({
         url: "/user_update/" + this.userInfo.id,
         method: "POST",
         // 添加头信息
@@ -125,19 +125,23 @@ export default {
         },
         data
       }).then(res => {
-        this.$toast.success("头像修改成功");
+        this.$toast.success("修改成功");
       });
     },
     // 修改昵称
     handleChangeNickname() {
       // 调用编辑用户信息的函数
-      this.handleEdit({ nickname: this.nickname });
-      // 同步的修改当前显示的数据
-      this.userInfo.nickname = this.nickname;
+      const request = this.handleEdit({ nickname: this.nickname });
+      //优化版
+      // 先把封装的函数return出来，用request接住，然后因为then方法是可以无限叠加的，所以在封装函数调用成功之后才用request.then执行数据同步，可以避免之前即使请求失败也能修改的bug
+      request.then(() => {
+        this.userInfo.nickname = this.nickname;
+      });
     },
     // 修改密码
     handleChangePassword() {
       // 调用编辑用户信息的函数
+      // 由于密码不需要回显，所以不用上面的方法
       this.handleEdit({ password: this.password });
     },
 

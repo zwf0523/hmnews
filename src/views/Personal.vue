@@ -28,7 +28,13 @@
     <!-- 组件的调用，单双标签都可以 -->
     <!-- :key不是报错，可以不加，
     但是vue希望给循环的元素指定“唯一的key”，所以推荐我们在循环时候都加上-->
-    <Listbar v-for="(item,index) in rows" :key="index" :label="item.label" :tips="item.tips" />
+    <Listbar
+      v-for="(item,index) in rows"
+      :key="index"
+      :label="item.label"
+      :tips="item.tips"
+      :path="item.path"
+    />
     <!-- handleClick点击退出按钮时候触发 -->
     <!-- click.native这个事件类型，会给Listbar这个组件最外部的div强制绑定点击事件
     不要去跟事件传递作比较-->
@@ -46,9 +52,9 @@ export default {
     return {
       // 组织一个列表按钮栏的数据
       rows: [
-        { label: "我的关注", tips: "关注的用户" },
-        { label: "我的跟帖", tips: "跟帖回复" },
-        { label: "我的收藏", tips: "文章视频" }
+        { label: "我的关注", tips: "关注的用户", path: "#" },
+        { label: "我的跟帖", tips: "跟帖回复", path: "#" },
+        { label: "我的收藏", tips: "文章视频", path: "#" }
       ],
       // 个人的详细信息,初始值给一个对象
       userInfo: {},
