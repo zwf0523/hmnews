@@ -14,7 +14,7 @@
         <p>{{moment(item.create_date).format('YYYY-MM-DD')}}</p>
       </div>
       <!-- 取消关注按钮 -->
-      <span class="cancel">取消关注</span>
+      <span class="cancel" @click="handleCancel(item.id,index)">取消关注</span>
     </div>
   </div>
 </template>
@@ -29,6 +29,8 @@ export default {
       follows: [],
       // 时间插件
       moment
+      //   本地用户的token值
+      //   localStorage: {}
     };
   },
   // 注册组件
@@ -51,6 +53,33 @@ export default {
       const { data } = res.data;
       this.follows = data;
     });
+  },
+  //   methods方法，点击事件都存在这里
+  methods: {
+    handleCancel(id, index) {
+      //   弹窗提示
+      this.$dialog
+        .confirm({
+          title: "提示",
+          message: "确定取消关注吗？"
+        })
+        .then(() => {
+          const localUserJson = JSON.parse(localStorage.getItem("userInfo"));
+          //   根据id来判断取消哪个关注
+          this.$axios({
+            url: "/user_unfollow/" + id,
+            headers: {
+              Authorization: localUserJson.token
+            }
+          }).then(res => {
+            // console.log(res);
+            // 提示框
+            this.$toast.success("取消关注成功");
+            // 刷新页面数据,其实就是请求成功后用splice根据index索引值删除取消关注的那个值
+            this.follows.splice(index, 1);
+          });
+        });
+    }
   }
 };
 </script>
