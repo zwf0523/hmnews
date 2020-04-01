@@ -43,6 +43,21 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// axios的响应拦截器
+axios.interceptors.response.use(res => {
+  return res;
+}, error => {
+  // 如果请求返回的数据是错误的，就会进入error的处理函数中
+  // error是js原生的错误对象，我们可以通过error.response来获取到详细的信息
+  // statusCode,message，获取到这两个错误的返回值信息
+  const { statusCode, message } = error.response.data;
+  if (statusCode === 400) {
+    Toast.fail(message)
+  }
+  return Promise.reject(error)
+}
+
+)
 new Vue({
   router,
   render: h => h(App)
