@@ -81,6 +81,7 @@ export default {
     display: block;
     object-fit: cover;
     margin-left: 10/360 * 100vw;
+    // 防止图片在flex布局下被挤压
     flex-shrink: 0;
   }
 }
