@@ -20,6 +20,14 @@ const routes = [
     path: '/login',
     component: () => import("@/views/Login")
   },
+  // 首页
+  {
+    path: '/index',
+    component: () => import("@/views/Index"),
+    meta: {
+      authorization: true
+    }
+  },
   // 个人中心页
   {
     path: '/personal',
