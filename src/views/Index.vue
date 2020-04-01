@@ -10,11 +10,68 @@
         <span class="iconfont iconwode"></span>
       </router-link>
     </div>
+    <!-- tab栏切换 -->
+    <!-- v-model：就是当前的索引值，是唯一的，比较类似于for循环的key -->
+    <!-- sticky：是否使用粘性定位布局 -->
+    <!-- swipeable: 是否开启手势滑动切换 -->
+    <van-tabs v-model="active" sticky swipeable>
+      <van-tab v-for="(item, index) in categories" :key="index" :title="item">
+        <div>
+          <!-- 文章列表的组件 -->
+          <!-- 只有单张图片的 -->
+          <PostItem1 />
+          <!-- 大于等于3张图片的组件 -->
+          <PostItem2 />
+          <!-- 视频的列表组件 -->
+          <PostItem3 />
+        </div>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
 <script>
-export default {};
+import PostItem1 from "@/components/PostItem1";
+import PostItem2 from "@/components/PostItem2";
+import PostItem3 from "@/components/PostItem3";
+export default {
+  data() {
+    return {
+      // 菜单的数据
+      categories: [
+        "关注",
+        "娱乐",
+        "体育",
+        "汽车",
+        "房产",
+        "关注",
+        "关注",
+        "娱乐",
+        "体育",
+        "汽车",
+        "房产",
+        "关注",
+        "∨"
+      ],
+      //   记录当前tab栏的切换的索引
+      active: 0
+    };
+  },
+  //   监听属性
+  watch: {
+    // 监听tab栏的切换
+    active() {
+      if (this.active === this.categories.length - 1) {
+        this.$router.push("/栏目管理");
+      }
+    }
+  },
+  components: {
+    PostItem1,
+    PostItem2,
+    PostItem3
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -51,5 +108,30 @@ export default {};
   .iconwode {
     font-size: 20px;
   }
+}
+// 重置vant组件的样式
+// 如果在scoped声明中去修改第三方库的class样式，必须要在前面添加/deep/
+/deep/ .van-tabs__nav {
+  background: #eee;
+}
+/deep/ .van-tab:nth-last-child(2) {
+  background: #eee;
+  width: 20px !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+  box-sizing: unset;
+}
+/deep/ .van-tabs__wrap {
+  padding-right: 20px;
+}
+/deep/ .van-tabs__nav {
+  position: static;
+}
+/deep/ .van-tabs__line {
+  display: none;
+}
+/deep/ .van-tab--active {
+  border-bottom: 1px #ff0000 solid;
 }
 </style> 
