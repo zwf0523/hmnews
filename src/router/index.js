@@ -24,9 +24,6 @@ const routes = [
   {
     path: '/index',
     component: () => import("@/views/Index"),
-    meta: {
-      authorization: true
-    }
   },
   // 个人中心页
   {

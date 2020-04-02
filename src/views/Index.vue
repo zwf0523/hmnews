@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 红色的头部 -->
     <div class="header">
       <span class="iconfont iconnew"></span>
       <router-link to="#" class="search">
@@ -16,16 +17,6 @@
     <!-- swipeable: 是否开启手势滑动切换 -->
     <van-tabs v-model="active" sticky swipeable>
       <van-tab v-for="(item, index) in categories" :key="index" :title="item.name">
-        <!-- <div> -->
-        <!-- 文章列表的组件 -->
-        <!-- 只有单张图片的 -->
-        <!-- <PostItem1 /> -->
-        <!-- 大于等于3张图片的组件 -->
-        <!-- <PostItem2 /> -->
-        <!-- 视频的列表组件 -->
-        <!-- <PostItem3 />
-        </div>-->
-
         <!-- 下拉刷新 -->
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
           <!-- van的列表组件 -->
@@ -33,16 +24,17 @@
           <van-list v-model="loading" :finished="finished" finished-text="我也是有底线的" @load="onLoad">
             <!-- 假设list是后台返回的数组，里有10个元素 -->
             <div v-for="(item, index) in list" :key="index">
-              <!-- type是后台返回的用于判断该文件是属于图片还是视频用的，type=1为图片，type=2为视频 -->
               <!-- 只有单张图片的 -->
               <PostItem1
-                v-if="item.type===1 && item.cover.length>0 && item.cover.length<3"
+                v-if="item.type === 1 && item.cover.length > 0 && item.cover.length < 3"
                 :data="item"
               />
-              <!-- 大于三张图片时 -->
-              <PostItem2 v-if="item.type===1 && item.cover.length>=3" :data="item" />
+
+              <!-- 大于等于3张图片 -->
+              <PostItem2 v-if="item.type === 1 && item.cover.length >= 3" :data="item" />
+
               <!-- 视频 -->
-              <PostItem3 v-if="item.type===2" :data="item" />
+              <PostItem3 v-if="item.type === 2" :data="item" />
             </div>
           </van-list>
         </van-pull-refresh>
@@ -50,29 +42,35 @@
     </van-tabs>
   </div>
 </template>
-
 <script>
+// 文章列表的组件,只有单张图片的
 import PostItem1 from "@/components/PostItem1";
+// 大于等于3张图片的组件
 import PostItem2 from "@/components/PostItem2";
+// 视频的列表组件
 import PostItem3 from "@/components/PostItem3";
 export default {
   data() {
     return {
       // 菜单的数据
+      // categories: ['关注','娱乐','体育','汽车','房产','关注',
+      // '关注','娱乐','体育','汽车','房产','关注', "∨"],
       categories: [],
-      //   记录当前tab栏的切换的索引
+      // 记录当前tab的切换的索引
       active: 0,
+      categoryId: 999,
       // 假设这个文章数组是后台返回的数据
       list: [],
       loading: false, // 是否正在加载中
       finished: false, // 是否已经加载完毕
-      refreshing: false // 是否正早下拉加载
+      refreshing: false // 是否正在下拉加载
     };
   },
-  //   监听属性
+  // 监听属性
   watch: {
     // 监听tab栏的切换
     active() {
+      // 判断如果点击的是最后一个图标，跳转到栏目管理页
       if (this.active === this.categories.length - 1) {
         this.$router.push("/栏目管理");
       }
@@ -84,46 +82,57 @@ export default {
     PostItem3
   },
   mounted() {
-    // 在请求之前，应该先判断本地没有栏目数据
+    // 在请求之前，应该先判断本地有没栏目数据
     const categories = JSON.parse(localStorage.getItem("categories"));
-    // 本地的{token}
+    // 本地的token
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
     // 如果本地有数据，获取本地的数据来渲染
     if (categories) {
       // 登录了(有token)但是第一条不是关注
       if (categories[0].name !== "关注" && token) {
-        // 获取栏目的数据
+        // 获取栏目数据
         this.getCategories(token);
         return;
       }
       // 登录了(有token)但是第一条不是关注
       if (categories[0].name === "关注" && !token) {
+        // 获取栏目数据
         this.getCategories();
         return;
       }
+      this.categories = categories;
+
+      //给每个栏目都加上pageIndex=1
+      this.handleCategories();
     } else {
       // 获取栏目数据
       this.getCategories(token);
     }
-
     // 请求文章列表，页面一开始都是请求头条栏目下的文章，头条栏目的id是999
-    // 这里要设置页面一打开就是头条栏目
     this.$axios({
       url: "/post",
       // params就是url问号后面的参数
       params: {
-        category: 999
+        category: this.categoryId
       }
     }).then(res => {
-      //文章的数据
+      // 文章的数据
       const { data } = res.data;
       // 保存到data的list中
       this.list = data;
     });
   },
   methods: {
-    //获取栏目数据，如果有token加上头信息,没有就不加
+    // 循环给栏目加上pageIndex，每个栏目都是自己的pageIndex
+    handleCategories() {
+      this.categories = this.categories.map(v => {
+        v.pageIndex = 1;
+        return v;
+      });
+    },
+    // 获取栏目数据, 如果有token加上到头信息。没有就不加
     getCategories(token) {
+      // 请求的配置
       const config = {
         url: "/category"
       };
@@ -133,41 +142,30 @@ export default {
       if (token) {
         config.headers = { Authorization: token };
       }
+      // 没有本地的数据才去请求栏目接口
       this.$axios(config).then(res => {
+        // 菜单的数据
         const { data } = res.data;
+        // 给data添加一个点击跳转到栏目管理的图标
         data.push({
           name: "∨"
         });
         this.categories = data;
+        // 把菜单的数据保存到本地
         localStorage.setItem("categories", JSON.stringify(data));
+        // 给每个栏目都加上pageIndex = 1
+        this.handleCategories();
       });
     },
-
-    onLoad() {
-      console.log("到底部了");
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(1);
-        }
-        // 加载状态结束
-        this.loading = false;
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 5000);
-    },
+    onLoad() {},
     onRefresh() {
-      // 加载完毕
+      // 表示加载完毕
       this.refreshing = false;
       console.log("正在下拉刷新");
     }
   }
 };
 </script>
-
 <style scoped lang="less">
 .header {
   height: 50/360 * 100vw;
@@ -208,6 +206,9 @@ export default {
 /deep/ .van-tabs__nav {
   background: #eee;
 }
+/deep/ .van-tab {
+  flex-basis: 15% !important;
+}
 /deep/ .van-tab:nth-last-child(2) {
   background: #eee;
   width: 20px !important;
@@ -228,4 +229,4 @@ export default {
 /deep/ .van-tab--active {
   border-bottom: 1px #ff0000 solid;
 }
-</style> 
+</style>
