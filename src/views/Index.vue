@@ -90,26 +90,59 @@ export default {
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
     // 如果本地有数据，获取本地的数据来渲染
     if (categories) {
-      this.categories = categories;
+      // 登录了(有token)但是第一条不是关注
+      if (categories[0].name !== "关注" && token) {
+        // 获取栏目的数据
+        this.getCategories(token);
+        return;
+      }
+      // 登录了(有token)但是第一条不是关注
+      if (categories[0].name === "关注" && !token) {
+        this.getCategories();
+        return;
+      }
     } else {
-      // 没有本地数据才去请求栏目接口
-      this.$axios({
+      // 获取栏目数据
+      this.getCategories(token);
+    }
+
+    // 请求文章列表，页面一开始都是请求头条栏目下的文章，头条栏目的id是999
+    // 这里要设置页面一打开就是头条栏目
+    this.$axios({
+      url: "/post",
+      // params就是url问号后面的参数
+      params: {
+        category: 999
+      }
+    }).then(res => {
+      //文章的数据
+      const { data } = res.data;
+      // 保存到data的list中
+      this.list = data;
+    });
+  },
+  methods: {
+    //获取栏目数据，如果有token加上头信息,没有就不加
+    getCategories(token) {
+      const config = {
         url: "/category"
-      }).then(res => {
-        // 菜单的数据
+      };
+      // 如果有token，把token添加到头信息中
+      // 如果有token请求回来的数据就会有关注的栏目，因为代表是登录的
+      // 如果没有token就没有关注的栏目
+      if (token) {
+        config.headers = { Authorization: token };
+      }
+      this.$axios(config).then(res => {
         const { data } = res.data;
-        // 给data添加一个跳转到栏目管理的图标
         data.push({
           name: "∨"
         });
-        // 再刷新一下页面的categories数据
         this.categories = data;
-        // 把菜单的数据保存到本地
         localStorage.setItem("categories", JSON.stringify(data));
       });
-    }
-  },
-  methods: {
+    },
+
     onLoad() {
       console.log("到底部了");
       // 异步更新数据
