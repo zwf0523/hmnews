@@ -21,7 +21,13 @@
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
           <!-- van的列表组件 -->
           <!-- @load 滚动到底部时候触发的函数 -->
-          <van-list v-model="loading" :finished="finished" finished-text="我也是有底线的" @load="onLoad">
+          <van-list
+            :immediate-check="false"
+            v-model="loading"
+            :finished="finished"
+            finished-text="我也是有底线的"
+            @load="onLoad"
+          >
             <!-- 假设list是后台返回的数组，里有10个元素 -->
             <div v-for="(item, index) in list" :key="index">
               <!-- 只有单张图片的 -->
@@ -113,6 +119,8 @@ export default {
       url: "/post",
       // params就是url问号后面的参数
       params: {
+        pageIndex: 1,
+        pageSize: 5,
         category: this.categoryId
       }
     }).then(res => {
@@ -157,7 +165,28 @@ export default {
         this.handleCategories();
       });
     },
-    onLoad() {},
+    onLoad() {
+      this.categories[this.active].pageIndex += 1;
+      //加载下一页的数据
+      this.$axios({
+        url: "/post",
+        params: {
+          pageIndex: this.categories[this.active].pageIndex,
+          pageSize: 5,
+          category: this.categoryId
+        }
+      }).then(res => {
+        const { data, total } = res.data;
+        // 把新文章数据合并到原来的文章列表中
+        this.list = [...his.list, ...data];
+        //加载状态结束
+        this.loading = false;
+        //是否是最后一页
+        if (this.list.length === total) {
+          this.finished = true;
+        }
+      });
+    },
     onRefresh() {
       // 表示加载完毕
       this.refreshing = false;
