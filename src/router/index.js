@@ -6,9 +6,9 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Login',
+    name: 'index',
     // component: Login
-    component: () => import("@/views/Login")
+    component: () => import("@/views/Index")
   },
   // 注册页
   {
