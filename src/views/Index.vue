@@ -26,8 +26,11 @@
             <!-- 假设list是后台返回的数组，里有10个元素 -->
             <div v-for="(item, index) in list" :key="index">
               <!-- 只有单张图片的 -->
-              <!-- <PostItem1 /> -->
-              {{index}}
+              <PostItem1 :data="item" v-if="item.type === 1 && item.cover.length < 3" />
+              <!-- 大于等于3张图片 -->
+              <PostItem2 :data="item" v-if="item.type === 1 && item.cover.length >= 3" />
+              <!-- 视频 -->
+              <PostItem3 :data="item" v-if="item.type === 2" />
             </div>
           </van-list>
         </van-pull-refresh>
@@ -52,7 +55,7 @@ export default {
       // 记录当前tab的切换的索引
       active: 0,
       // 假设这个数组是后台返回的数据
-      list: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // 10个1
+      list: [],
       loading: false, // 是否正在加载中
       finished: false, // 是否已经加载完毕
       refreshing: false, // 是否正在下拉加载
@@ -90,8 +93,11 @@ export default {
         this.categories = categories;
       }
     } else {
+      // 调用请求栏目的数据,并且保存到本地
       this.getCategories();
     }
+    // 请求文章列表数据
+    this.getList();
   },
   methods: {
     getCategories() {
@@ -110,6 +116,23 @@ export default {
         });
         this.categories = data;
         localStorage.setItem("categories", JSON.stringify(data));
+      });
+    },
+    // 请求文章列表
+    getList() {
+      //当前栏目的id
+      const { id } = this.categories[this.active];
+      this.$axios({
+        url: "post",
+        params: {
+          pageIndex: 1, // 页数
+          pageSize: 5, //  请求数据的条数
+          category: id
+        }
+      }).then(res => {
+        const { data } = res.data;
+        // 保存到data的文章列表中
+        this.list = data;
       });
     },
     onLoad() {
