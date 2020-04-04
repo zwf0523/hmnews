@@ -77,7 +77,21 @@ export default {
   mounted() {
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
     this.token = token;
-    this.getCategories();
+    const categories = JSON.parse(localStorage.getItem("categories"));
+    if (categories) {
+      // 如果当前是登录的状态，但是栏目的第一项居然不是“关注”，需要重新请求
+      // 如果当前未登录，但是栏目的第一项居然叫“关注”，也需要重新请求
+      if (
+        (token && categories[0].name !== "关注") ||
+        (!token && categories[0].name === "关注")
+      ) {
+        this.getCategories();
+      } else {
+        this.categories = categories;
+      }
+    } else {
+      this.getCategories();
+    }
   },
   methods: {
     getCategories() {
@@ -95,6 +109,7 @@ export default {
           name: "∨"
         });
         this.categories = data;
+        localStorage.setItem("categories", JSON.stringify(data));
       });
     },
     onLoad() {
