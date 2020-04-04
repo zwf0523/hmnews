@@ -16,7 +16,7 @@
     <!-- v-model：就是当前的索引值，是唯一的，比较类似于for循环的key -->
     <!-- sticky：是否使用粘性定位布局 -->
     <!-- swipeable: 是否开启手势滑动切换 -->
-    <van-tabs v-model="active" sticky swipeable>
+    <van-tabs v-model="active" sticky swipeable @scroll="handelScroll">
       <van-tab v-for="(item, index) in categories" :key="index" :title="item.name">
         <!-- 下拉刷新 -->
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
@@ -102,8 +102,6 @@ export default {
       // 调用请求栏目的数据,并且保存到本地
       this.getCategories();
     }
-    // 请求文章列表数据
-    this.getList();
   },
   methods: {
     // 循环处理栏目的数据
@@ -117,6 +115,8 @@ export default {
       });
       // 打印数据看pageindex属性是否成功添加
       // console.log(this.categories);
+      // 请求文章列表数据,是一定要放到栏目处理之后执行；
+      this.getList();
     },
     getCategories() {
       const config = {
@@ -184,6 +184,12 @@ export default {
       this.categories[this.active].pageIndex += 1;
       // 请求文章列表
       this.getList();
+    },
+    // 监听tab滚动的事件
+    handelScroll(data) {
+      // scrollTop是滚动条的距离
+      const { scrollTop } = data;
+      console.log(scrollTop);
     },
 
     onRefresh() {
