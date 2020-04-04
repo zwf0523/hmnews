@@ -22,7 +22,13 @@
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
           <!-- van的列表组件 -->
           <!-- @load 滚动到底部时候触发的函数 -->
-          <van-list v-model="loading" :finished="finished" finished-text="我也是有底线的" @load="onLoad">
+          <van-list
+            immediate-check
+            v-model="loading"
+            :finished="finished"
+            finished-text="我也是有底线的"
+            @load="onLoad"
+          >
             <!-- 假设list是后台返回的数组，里有10个元素 -->
             <div v-for="(item, index) in list" :key="index">
               <!-- 只有单张图片的 -->
@@ -91,6 +97,8 @@ export default {
         this.getCategories();
       } else {
         this.categories = categories;
+        // 调用方法给每个栏目添加新属性
+        this.handleCategories();
       }
     } else {
       // 调用请求栏目的数据,并且保存到本地
@@ -100,6 +108,14 @@ export default {
     this.getList();
   },
   methods: {
+    // 循环处理栏目的数据
+    handleCategories() {
+      this.categories = this.categories.map(v => {
+        v.pageIndex = 1; // 给每个栏目都添加了一个pageIndex属性
+        return v;
+      });
+      console.log(this.categories);
+    },
     getCategories() {
       const config = {
         url: "/category"
@@ -116,6 +132,8 @@ export default {
         });
         this.categories = data;
         localStorage.setItem("categories", JSON.stringify(data));
+        // 调用方法给每个栏目添加新属性
+        this.handleCategories();
       });
     },
     // 请求文章列表
@@ -125,7 +143,7 @@ export default {
       this.$axios({
         url: "post",
         params: {
-          pageIndex: 1, // 页数
+          pageIndex: 1, // 每个栏目页数是不一样的
           pageSize: 5, //  请求数据的条数
           category: id
         }
@@ -135,24 +153,11 @@ export default {
         this.list = data;
       });
     },
+    // 请求下一页的数据
     onLoad() {
-      console.log("已经拖动到了底部");
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 5000);
+      this.getList();
     },
+
     onRefresh() {
       // 表示加载完毕
       this.refreshing = false;
