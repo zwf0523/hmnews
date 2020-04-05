@@ -11,7 +11,7 @@ import axios from "axios";
 // 绑定到原型
 Vue.prototype.$axios = axios;
 
-axios.defaults.baseURL = "http://localhost:3000"
+axios.defaults.baseURL = "http://192.168.31.218:3000"
 // 注册vant插件 (vue.use都是用来注册插件的)
 Vue.use(Vant)
 // 上线环境是否提示信息(忽略)
