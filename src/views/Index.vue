@@ -17,7 +17,12 @@
     <!-- sticky：是否使用粘性定位布局 -->
     <!-- swipeable: 是否开启手势滑动切换 -->
     <van-tabs v-model="active" sticky swipeable @scroll="handelScroll">
-      <van-tab v-for="(item, index) in categories" :key="index" :title="item.name">
+      <van-tab
+        v-for="(item, index) in categories"
+        v-if="item.is_top===1||item.name===`∨`"
+        :key="index"
+        :title="item.name"
+      >
         <!-- 下拉刷新 -->
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
           <!-- van的列表组件 -->
@@ -68,9 +73,13 @@ export default {
   watch: {
     // 监听tab栏的切换
     active() {
-      // 判断如果点击的是最后一个图标，跳转到栏目管理页
-      if (this.active === this.categories.length - 1) {
-        this.$router.push("/栏目管理");
+      // 先过滤出is_top等于1的或者是v图标的栏目
+      const arr = this.categories.filter(v => {
+        return v.is_top || v.name === "∨";
+      });
+      // 如果点击的是最后一个图标，就需要跳转到栏目管理页
+      if (this.active === arr.length - 1) {
+        this.$router.push("/category");
       }
       // 当栏目切换时候，需要重新的请求当前栏目的数据
       this.getList();

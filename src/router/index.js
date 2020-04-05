@@ -65,6 +65,11 @@ const routes = [
       authorization: true
     }
   },
+  {
+    // 栏目管理页
+    path: '/category',
+    component: () => import("@/views/Category"),
+  },
   // {
   //   path: '/about',
   //   name: 'About',
