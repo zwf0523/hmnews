@@ -17,7 +17,7 @@
     <div class="record">
       <div class="title">
         <strong>历史记录</strong>
-        <span class="iconfont iconicon-test"></span>
+        <span class="iconfont iconicon-test" @click="handleClear"></span>
       </div>
       <div class="record-list">
         <span class="record-item" v-for="(item,index) in history" :key="index">{{item}}</span>
@@ -63,6 +63,10 @@ export default {
       localStorage.setItem("history", JSON.stringify(this.history));
       // 输入完后清空搜索框
       this.value = "";
+    },
+    handleClear() {
+      this.history = [];
+      localStorage.removeItem("history");
     }
   }
 };
