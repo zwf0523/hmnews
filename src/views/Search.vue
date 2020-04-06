@@ -20,7 +20,12 @@
         <span class="iconfont iconicon-test" @click="handleClear"></span>
       </div>
       <div class="record-list">
-        <span class="record-item" v-for="(item,index) in history" :key="index">{{item}}</span>
+        <span
+          class="record-item"
+          v-for="(item,index) in history"
+          :key="index"
+          @click="handleRecord(item)"
+        >{{item}}</span>
       </div>
     </div>
 
@@ -67,6 +72,9 @@ export default {
     handleClear() {
       this.history = [];
       localStorage.removeItem("history");
+    },
+    handleRecord(item) {
+      this.value = item;
     }
   }
 };
