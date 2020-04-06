@@ -8,6 +8,9 @@ import router from './router'
 import Vant, { Toast } from 'vant';
 import axios from "axios";
 
+// 声明一个变量来保存根实例对象
+let app;
+
 // 绑定到原型
 Vue.prototype.$axios = axios;
 
@@ -54,11 +57,19 @@ axios.interceptors.response.use(res => {
   if (statusCode === 400) {
     Toast.fail(message)
   }
+  // 如果状态码是403，就表示token是错的或者没有传token
+  if (statusCode === 403) {
+    //提示
+    Toast.fail(message);
+    //跳转到登录页
+    app.$router.push("/login")
+  }
   return Promise.reject(error)
 }
 
 )
-new Vue({
+app = new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
