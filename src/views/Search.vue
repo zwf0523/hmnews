@@ -61,6 +61,10 @@ export default {
     //点击搜索按钮或者enter键触发的事件
     handleSearch() {
       //把当前的搜索关键添加到数组中
+      if (this.value === "") {
+        this.$toast("请输入信息");
+        return;
+      }
       this.history.unshift(this.value);
       //数组去重
       this.history = [...new Set(this.history)];
