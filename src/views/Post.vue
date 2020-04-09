@@ -104,16 +104,26 @@ export default {
   methods: {
     // 关注和取消关注
     handleFollow() {
+      let url = "";
+      // 先判断当前的状态如果是关注，就取消关注
+      if (this.post.has_follow) {
+        //取消关注
+        url = "/user_unfollow/" + this.post.user.id;
+      } else {
+        //关注
+        url = "/user_follows/" + this.post.user.id;
+      }
       this.$axios({
-        url: "/user_follows/" + this.post.user.id,
+        url,
         headers: {
           Authorization: this.token
         }
       }).then(res => {
         // 关注成功之后修改关注状态
-        this.post.has_follow = true;
+        this.post.has_follow = !this.post.has_follow;
+        console.log(res);
 
-        this.$toast.success("关注成功");
+        this.$toast.success(res.data.message);
       });
     }
   }
