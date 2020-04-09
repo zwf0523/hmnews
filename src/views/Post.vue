@@ -28,10 +28,10 @@
 
       <!-- 按钮列表 -->
       <div class="actions">
-        <div class="actions-item">
+        <div class="actions-item" @click="handleLike">
           <span class="iconfont icondianzan"></span>
           <!-- 点赞 -->
-          <i>{{ Number(post.has_like) }}</i>
+          <i>{{post.like_length}}</i>
         </div>
         <div class="actions-item">
           <span class="iconfont iconweixin"></span>
@@ -99,6 +99,7 @@ export default {
       // data是文章的详情
       const { data } = res.data;
       this.post = data;
+      console.log(res);
     });
   },
   methods: {
@@ -121,8 +122,27 @@ export default {
       }).then(res => {
         // 关注成功之后修改关注状态
         this.post.has_follow = !this.post.has_follow;
+        this.$toast.success(res.data.message);
+      });
+    },
+    // 文章点赞
+    handleLike() {
+      this.$axios({
+        url: "/post_like/" + this.post.id,
+        headers: {
+          Authorization: this.token
+        }
+      }).then(res => {
+        // 修改点赞的状态
+        this.post.has_like = !this.post.has_like;
         console.log(res);
 
+        // 判断当前是否点赞
+        if (this.post.has_like) {
+          // 如果是点赞就加1
+          this.post.like_length += 1;
+        }
+        // 弹窗提示
         this.$toast.success(res.data.message);
       });
     }
