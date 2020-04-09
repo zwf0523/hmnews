@@ -1,16 +1,18 @@
 <template>
-  <div class="video">
-    <h4>{{data.title}}</h4>
-    <div class="cover">
-      <!-- 封面图片 -->
-      <img :src="$axios.defaults.baseURL + data.cover[0].url" />
-      <!-- 图片上的按钮 -->
-      <div class="cover-layer">
-        <span class="iconfont iconshipin"></span>
+  <router-link :to="`/video/${data.id}`">
+    <div class="video">
+      <h4>{{data.title}}</h4>
+      <div class="cover">
+        <!-- 封面图片 -->
+        <img :src="$axios.defaults.baseURL + data.cover[0].url" />
+        <!-- 图片上的按钮 -->
+        <div class="cover-layer">
+          <span class="iconfont iconshipin"></span>
+        </div>
       </div>
+      <p>{{data.user.nickname}} {{data.comment_length}}跟帖</p>
     </div>
-    <p>{{data.user.nickname}} {{data.comment_length}}跟帖</p>
-  </div>
+  </router-link>
 </template>
 
 <script>
