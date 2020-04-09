@@ -34,14 +34,14 @@ export default {
 
 <style scoped lang="less">
 .comment-floor {
-  margin-bottom: 10/360 * 100vw;
+  margin-bottom: 15/360 * 100vw;
   border: 1px #ddd solid;
   padding: 2px;
   font-size: 13px;
   .floor-top {
     display: flex;
     justify-content: space-between;
-    padding: 5px;
+    padding: 10/360 * 100vw 5px;
     span {
       font-size: 12px;
       color: #999;
@@ -52,7 +52,7 @@ export default {
     }
   }
   .content {
-    padding: 5px;
+    padding: 10/360 * 100vw 5px;
     padding-top: 0;
   }
 }
