@@ -141,6 +141,9 @@ export default {
         if (this.post.has_like) {
           // 如果是点赞就加1
           this.post.like_length += 1;
+        } else {
+          // 不是是点赞就加-1
+          this.post.like_length -= 1;
         }
         // 弹窗提示
         this.$toast.success(res.data.message);
