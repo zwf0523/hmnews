@@ -97,6 +97,19 @@ export default {
     PostItem2,
     PostItem3
   },
+  // 组件内的守卫，每次进入页面时候都会触发
+  beforeRouteEnter(to, from, next) {
+    // 如果是来自栏目管理页，我就把默认页面定在第一页
+    if (from.path === "/category") {
+      //vm就是this
+      next(vm => {
+        vm.active = 0;
+      });
+    } else {
+      // else无事发生
+      next();
+    }
+  },
   mounted() {
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
     this.token = token;
