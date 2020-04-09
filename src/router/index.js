@@ -82,7 +82,7 @@ const routes = [
   },
   {
     // 视频文章详情页
-    path: "/video/:id",
+    path: '/video/:id',
     component: () => import("@/views/Video")
   }
   // {
